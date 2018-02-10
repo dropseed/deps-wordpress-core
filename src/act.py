@@ -5,9 +5,6 @@ import tempfile
 
 
 def act():
-    # An actor will always be given a set of "input" data, so that it knows what
-    # exactly it is supposed to update. That JSON data will be stored in a file
-    # at /dependencies/input_data.json for you to load.
     with open('/dependencies/input_data.json', 'r') as f:
         data = json.load(f)
 
