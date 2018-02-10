@@ -5,6 +5,7 @@ import sys
 
 from bs4 import BeautifulSoup
 import requests
+import semantic_version
 
 
 def collect():
@@ -29,6 +30,16 @@ def collect():
             version = td.text
             available_versions.append(version)
 
+    # filter out anything below what is installed
+    filtered = []
+    for a in available_versions:
+        try:
+            if semantic_version.Version(a, partial=True) > semantic_version.Version(version_installed, partial=True):
+                filtered.append(a)
+        except ValueError:
+            # one of them is not a valid semver, it needs to be included as an option
+            filtered.append(a)
+
     schema_output = json.dumps({
         'manifests': {
             path.relpath(path.abspath(wordpress_path), '/repo'): {
@@ -36,7 +47,7 @@ def collect():
                     'dependencies': {
                         'WordPress': {
                             'constraint': version_installed,
-                            'available': [{'name': x} for x in available_versions],
+                            'available': [{'name': x} for x in filtered],
                             'source': 'wordpress-core',
                         }
                     }
