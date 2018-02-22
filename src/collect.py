@@ -1,17 +1,19 @@
 import re
 from os import path
-import json
 import sys
+from subprocess import run
 
 from bs4 import BeautifulSoup
 import requests
 import semantic_version
 
+from utils import write_json_to_temp_file
+
 
 def collect():
     wordpress_path = sys.argv[1]
 
-    version_php_path = path.join('/repo', wordpress_path, 'wp-includes/version.php')
+    version_php_path = path.join(wordpress_path, 'wp-includes/version.php')
 
     with open(version_php_path, 'r') as f:
         content = f.read()
@@ -40,9 +42,9 @@ def collect():
             # one of them is not a valid semver, it needs to be included as an option
             filtered.append(a)
 
-    schema_output = json.dumps({
+    schema_output = {
         'manifests': {
-            path.relpath(path.abspath(wordpress_path), '/repo'): {
+            wordpress_path: {
                 'current': {
                     'dependencies': {
                         'WordPress': {
@@ -54,5 +56,5 @@ def collect():
                 }
             }
         }
-    })
-    print(f'<Dependencies>{schema_output}</Dependencies>')
+    }
+    run(['deps', 'collect', write_json_to_temp_file(schema_output)], check=True)
