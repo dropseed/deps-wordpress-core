@@ -5,6 +5,9 @@ from subprocess import run
 from utils import write_json_to_temp_file
 
 
+COPY_WP_CONTENT = os.getenv('SETTING_COPY_WP_CONTENT', 'false') == 'true'
+
+
 def act():
     with open('/dependencies/input_data.json', 'r') as f:
         data = json.load(f)
@@ -29,8 +32,9 @@ def act():
             run(['cp', '-r', os.path.join(version_directory, 'wordpress/wp-includes'), repo_wordpress_path('wp-includes')], check=True)
             run(['cp', '-r', os.path.join(version_directory, 'wordpress/wp-admin'), repo_wordpress_path('wp-admin')], check=True)
 
-            repo_content = repo_wordpress_path('wp-content')
-            run(f'cp -r {version_directory}/wordpress/wp-content/* {repo_content}', shell=True)
+            if COPY_WP_CONTENT:
+                repo_content = repo_wordpress_path('wp-content')
+                run(f'cp -r {version_directory}/wordpress/wp-content/* {repo_content}', shell=True)
 
             wordpress_root = repo_wordpress_path('.')
             run(f'cp -r {version_directory}/wordpress/* {wordpress_root}', shell=True)
