@@ -11,6 +11,8 @@ from utils import write_json_to_temp_file
 
 
 def collect():
+    run(['deps', 'hook', 'before_update'], check=True)
+
     wordpress_path = sys.argv[1]
 
     version_php_path = path.join(wordpress_path, 'wp-includes/version.php')
