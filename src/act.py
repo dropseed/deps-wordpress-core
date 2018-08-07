@@ -37,7 +37,7 @@ def act():
                 run(f'cp -r {version_directory}/wordpress/wp-content/* {repo_content}', shell=True)
 
             wordpress_root = repo_wordpress_path('.')
-            run(f'cp -r {version_directory}/wordpress/* {wordpress_root}', shell=True)
+            run(f'cp {version_directory}/wordpress/* {wordpress_root}', shell=True)
 
             run(['deps', 'commit', '-m', 'Update {} from {} to {}'.format(dependency_name, installed, version_to_update_to), repo_wordpress_path('.')], check=True)
 

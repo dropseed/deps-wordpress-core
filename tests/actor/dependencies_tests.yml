@@ -5,7 +5,21 @@ cases:
   repo_contents: tests/actor/basic/repo
   input_data_path: tests/actor/basic/input_data.json
   output_data_path: tests/actor/basic/expected_output_data.json
+  user_config:
+    settings:
+      copy_wp_content: true
   tests:
     - |
         git checkout deps/update-0 && \
         diff -r -x '.git' ${CWD}/tests/actor/basic/repo_final/ ./
+
+- name: without_content
+  type: actor
+  dockerfile: Dockerfile
+  repo_contents: tests/actor/without_content/repo
+  input_data_path: tests/actor/without_content/input_data.json
+  output_data_path: tests/actor/without_content/expected_output_data.json
+  tests:
+    - |
+        git checkout deps/update-0 && \
+        diff -r -x '.git' ${CWD}/tests/actor/without_content/repo_final/ ./
