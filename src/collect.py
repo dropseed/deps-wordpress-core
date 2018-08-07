@@ -22,27 +22,28 @@ def collect():
         found = re.search(r'^\$wp_version = \'(.*)\';$', content, re.MULTILINE)
         version_installed = found.groups()[0]
 
-    releases_html = requests.get('https://wordpress.org/download/release-archive/').text
+    releases_html = requests.get('https://wordpress.org/download/releases/', allow_redirects=True).text
     soup = BeautifulSoup(releases_html, 'html.parser')
 
     available_versions = []
 
-    for tbody in soup.find_all('tbody'):
-        for tr in tbody.find_all('tr'):
-            # get first td that has version number
-            td = tr.find('td')
-            version = td.text
-            available_versions.append(version)
+    for tr in soup.find_all('tr'):
+        # get first td that has version number
+        td = tr.find('td')
+        version = td.text
+        available_versions.append(version)
 
-    # filter out anything below what is installed
+    # filter out anything below what is installed, use a list instead of set so it keeps order
     filtered = []
     for a in available_versions:
         try:
             if semantic_version.Version.coerce(a) > semantic_version.Version.coerce(version_installed):
-                filtered.append(a)
+                if a not in filtered:
+                    filtered.append(a)
         except ValueError:
             # one of them is not a valid semver, it needs to be included as an option
-            filtered.append(a)
+            if a not in filtered:
+                filtered.append(a)
 
     schema_output = {
         'manifests': {
