@@ -1,0 +1,22 @@
+{
+  "manifests": {
+    ".": {
+      "current": {
+        "dependencies": {
+          "WordPress": {
+            "constraint": "4.7.4",
+            "source": "wordpress-core"
+          }
+        }
+      },
+      "updated": {
+        "dependencies": {
+          "WordPress": {
+            "constraint": "5.2.2",
+            "source": "wordpress-core"
+          }
+        }
+      }
+    }
+  }
+}
